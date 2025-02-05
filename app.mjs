@@ -8,6 +8,10 @@
 import express from "express";
 import dotenv from 'dotenv';
 import mongoose, { Schema } from 'mongoose';
+import bcrypt from 'bcryptjs';
+import bodyParser from "body-parser";
+
+
 
 
 
@@ -24,6 +28,10 @@ const PORT = 3000;
 //==========================
 
 
+
+// Config body-parser and express to parse JSON & form data
+app.use(express.json());
+app.use(bodyParser.urlencoded({extended:true}))
 
 //dotenv CONFIG
 dotenv.config();
@@ -45,12 +53,11 @@ connectDB();
 
 
 
-
-// Testing route
-app.get('/', (re, res) => {
-
-    res.send("Hello world");
+app.get("/", (req, res) => {
+    res.send("Hellow world!")
 })
+
+
 
 
 
