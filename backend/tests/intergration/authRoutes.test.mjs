@@ -14,17 +14,24 @@ import app from "../../../app.mjs";
 require("dotenv").config();
 
 
+//==========================
+// DATABASE CONNECTION AND TESTING
+//==========================
 
+
+// Connect Database Before
 beforeEach(async () => {
     await mongoose.connect(process.env.DB_URL);
 });
 
 
+//Then Disconnect Database After
 afterEach(async () => {
     await mongoose.connect().closer();
 });
 
 
+// Tests Register Route
 describe("POST /register _  Auth Register Route Integration Test", () => {
 
     test("Should register a new user and return a token", async () => {
@@ -56,7 +63,7 @@ describe("POST /register _  Auth Register Route Integration Test", () => {
 })
 
 
-
+// Tests LogIn Route
 describe("POST /login _ Auth Login Route Intergration Test", () => {
 
     test("Should log in an existing user and return a token", async () => {
