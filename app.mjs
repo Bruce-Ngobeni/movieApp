@@ -8,7 +8,6 @@
 import express from "express";
 import dotenv from 'dotenv';
 import mongoose, { Schema } from 'mongoose';
-import bcrypt from 'bcryptjs';
 import bodyParser from "body-parser";
 
 
