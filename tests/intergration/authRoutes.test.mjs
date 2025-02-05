@@ -8,6 +8,7 @@
 import mongoose from "mongoose";
 import request from "supertest";
 import app from "../../../app.mjs";
+import {afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 
 
 // DOTENV Configuration
@@ -20,13 +21,13 @@ require("dotenv").config();
 
 
 // Connect Database Before
-beforeEach(async () => {
+beforeAll(async () => {
     await mongoose.connect(process.env.DB_URL);
 });
 
 
 //Then Disconnect Database After
-afterEach(async () => {
+afterAll(async () => {
     await mongoose.connect().closer();
 });
 
