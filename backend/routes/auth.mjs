@@ -1,6 +1,7 @@
 import express from "express";
 import User from "../models/user.mjs"
 import bcrypt from 'bcryptjs';
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -13,9 +14,7 @@ router.post("/register", async (req, res, next) => {
         // check if email is already in use
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            const error = new Error("Email already in use");
-            error.status = 400;
-            return next(error);
+            return res.status(400).json({ message: "Email is already registered" });
         }
 
         // Hash the password
@@ -27,7 +26,19 @@ router.post("/register", async (req, res, next) => {
         // Save user to the database
         await newUser.save();
 
-        return res.status(201).json({message: "User successfully created", user: newUser});
+        // Generate JWT Token
+        const token = jwt.sign(
+            {id:newUser._id, email: newUser.email},
+            process.env.SECRETKEY,
+            {expiresIn:"1d"}
+        );
+    
+
+        return res.status(201).json({
+            message: "User successfully created", 
+            user: { id: newUser._id, email:newUser.email},
+            token
+        });
 
 
     } catch (error) {
@@ -46,21 +57,27 @@ router.post("/login", async (req, res, next) => {
         // Check if user exist
         const user = await User.findOne({ email });
         if (!user) {
-            const error = new Error("User not found");
-            error.status = 404;
-            return next(error)
+            return res.status(404).json({ message: "Invalid email or password" });
         }
 
         // Compare hashed password
         const validate = await bcrypt.compare(password, user.password);
         if (!validate) {
-            const error = new Error("Wrong password");
-            error.status = 401;
-            return next(error);
+            return res.status(401).json({ message: "Invalid email or password" });
         }
 
-
-        return res.status(200).json({ user, message: "Successfully logged in" })
+        // Generate JWT Token
+        const token = jwt.sign(
+            {id:user._id, email: user.email},
+            process.env.SECRETKEY,
+            {expiresIn:"1d"}
+        );
+        
+        return res.status(200).json({
+            message: "Successfully logged in",
+            user: {id: user._id, email: user.email}, 
+            token,
+        });
 
         
     } catch (error) {
