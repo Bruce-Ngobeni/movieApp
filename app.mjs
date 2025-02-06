@@ -3,22 +3,59 @@
 //==========================
 
 
+//==========================
 // NPM IMPORTS
+//==========================
 import express from "express";
 import dotenv from 'dotenv';
 import mongoose, { Schema } from 'mongoose';
 import bodyParser from "body-parser";
+import passport from "passport";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import jwt from "jsonwebtoken";
+import dotenv from  "dotenv";
 
 
+
+//==========================
 // Middleware IMPORTS
+//==========================
+
+// errorhandling
 import errorhandle from "./backend/middleware/errorHandle.mjs";
+
+//passport strategies
+import "./backend/middleware/passport-config.mjs";
+
+//dotenv CONFIG
+dotenv.config();
+
+
+// Session middleware for web authentication
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: true,
+        store: MongoStore.create({mongoUrl: process.env.DB_URL}),
+        cookie: {secure: false}  // Set secure after implementing HTTPS -------------------------------
+    })
+)
+
+
+//initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 // Models IMPORTS
 
 
 
+//==========================
 // ROUTES IMPORTS
+//==========================
 import authRoutes from "./backend/routes/auth.mjs";
 
 
@@ -41,8 +78,6 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 
-//dotenv CONFIG
-dotenv.config();
 
 
 
