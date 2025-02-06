@@ -11,6 +11,13 @@ import mongoose, { Schema } from 'mongoose';
 import bodyParser from "body-parser";
 
 
+//Middleware IMPORTS
+import errorhandle from "./backend/middleware/errorHandle.mjs";
+
+
+
+// ROUTES IMPORTS
+
 
 
 
@@ -58,7 +65,12 @@ app.get("/", (req, res) => {
 
 
 
+//==========================
+// Middlewares Configuration
+//==========================
 
+// Error Handling Middleware
+app.use(errorhandle);
 
 
 
