@@ -13,9 +13,13 @@ import bodyParser from "body-parser";
 import passport from "passport";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-import jwt from "jsonwebtoken";
-import dotenv from  "dotenv";
 
+
+//==========================
+// DEVELOPMENT
+//==========================
+const app = express();
+const PORT = 3000;
 
 
 //==========================
@@ -61,14 +65,6 @@ import authRoutes from "./backend/routes/auth.mjs";
 
 
 //==========================
-// DEVELOPMENT
-//==========================
-const app = express();
-const PORT = 3000;
-
-
-
-//==========================
 // CONFIG
 //==========================
 
@@ -76,8 +72,6 @@ const PORT = 3000;
 // Config body-parser and express to parse JSON & form data
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }))
-
-
 
 
 
