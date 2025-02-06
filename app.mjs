@@ -3,7 +3,6 @@
 //==========================
 
 
-
 // NPM IMPORTS
 import express from "express";
 import dotenv from 'dotenv';
@@ -11,13 +10,16 @@ import mongoose, { Schema } from 'mongoose';
 import bodyParser from "body-parser";
 
 
-//Middleware IMPORTS
+// Middleware IMPORTS
 import errorhandle from "./backend/middleware/errorHandle.mjs";
+
+
+// Models IMPORTS
 
 
 
 // ROUTES IMPORTS
-
+import authRoutes from "./backend/routes/auth.mjs";
 
 
 
@@ -30,26 +32,16 @@ const PORT = 3000;
 
 
 //==========================
-// CONFIG
+// DATABASE CONNECTION
 //==========================
 
 
-
-// Config body-parser and express to parse JSON & form data
-app.use(express.json());
-app.use(bodyParser.urlencoded({extended:true}))
-
-//dotenv CONFIG
-dotenv.config();
-
-
-
-// Database connection
+// Connect to database
 const connectDB = async () => {
     try {
         const client = await mongoose.connect(process.env.DB_URL);
         console.log("Successfully connected to the database!")
-        
+
     } catch (error) {
         console.log("Error connecting to database!")
     }
@@ -57,6 +49,18 @@ const connectDB = async () => {
 connectDB();
 
 
+
+//==========================
+// CONFIG
+//==========================
+
+
+// Config body-parser and express to parse JSON & form data
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }))
+
+//dotenv CONFIG
+dotenv.config();
 
 
 app.get("/", (req, res) => {
@@ -66,10 +70,18 @@ app.get("/", (req, res) => {
 
 
 //==========================
+// ROUTES Configuration
+//==========================
+
+app.use("/", authRoutes);
+
+
+
+//==========================
 // Middlewares Configuration
 //==========================
 
-// Error Handling Middleware
+// Error Handling Middleware config
 app.use(errorhandle);
 
 
