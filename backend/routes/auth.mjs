@@ -42,6 +42,17 @@ router.post("/jwt-login", async (re, res) => {
 });
 
 
+//Logout route
+router.get("/logout", (req, res) => {
+    req.logout( (err) => {
+        if(err){
+            return res.status(500).json({message: "Logout failed", error: err});
+        };
+        res.status(200).json({message: "Logout successfull"});
+    })
+})
+
+
 
 
 export default router;
