@@ -9,10 +9,12 @@ import mongoose from "mongoose";
 import request from "supertest";
 import app from "../../../app.mjs";
 import {afterAll, beforeAll, describe, expect, test } from "@jest/globals";
+import dotenv from "dotenv";
 
 
 // DOTENV Configuration
-require("dotenv").config();
+dotenv.config();
+
 
 
 //==========================
@@ -26,13 +28,16 @@ beforeAll(async () => {
 });
 
 
-//Then Disconnect Database After
+// Disconnect Database After
 afterAll(async () => {
-    await mongoose.connect().closer();
+    await mongoose.connect().close();
 });
 
 
-// Tests Register Route
+
+//==========================
+// AUTH REGISTER ROUTE TESTS
+//==========================
 describe("POST /register _  Auth Register Route Integration Test", () => {
 
     test("Should register a new user and return a token", async () => {
@@ -56,15 +61,15 @@ describe("POST /register _  Auth Register Route Integration Test", () => {
             .send({ email: "test@example.com", password: "password123" });
 
         expect(response.status).toEqual(400);
-        expect(() => {
-            !response.body.toEqual("token");
-        });
+        expect(response.body).not.toHaveProperty("token");
         expect(response.body.message).toBe("Email already in use");
     })
 })
 
 
-// Tests LogIn Route
+//==========================
+// AUTH LOGIN ROUTE TESTS
+//==========================
 describe("POST /login _ Auth Login Route Intergration Test", () => {
 
     test("Should log in an existing user and return a token", async () => {
@@ -97,7 +102,7 @@ describe("POST /login _ Auth Login Route Intergration Test", () => {
 
         const response = await request(app)
             .post("/login")
-            .send({ email: "test@exaple.com", password: "wrongpassword" })
+            .send({ email: "test@example.com", password: "wrongpassword" })
 
         expect(response.status).toEqual(401);
         expect(response.body.message).toBe("Invalid password");
