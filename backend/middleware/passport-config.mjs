@@ -6,6 +6,8 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.mjs";
 import user from "../models/user.mjs";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+
 
 
 //Load environment variables
@@ -45,6 +47,7 @@ passport.use(
                     { expiresIn: "1d" }
                 );
 
+
                 // Pass user and token to the done callback
                 return done(null, newUser, { message: "User successfully created", token });
 
@@ -80,6 +83,7 @@ passport.use(
                     return done(null, false, { message: "Invalid email or password" });
                 }
 
+
                 // Authentication successful
                 return done(null, user);
 
@@ -98,10 +102,10 @@ passport.use(
             secretOrKey: process.env.JWT_SECRET,
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
         },
-        async(token,done) => {
+        async (token, done) => {
             try {
-                return done(null, token.user);
-                
+                return done(null, token);
+
             } catch (error) {
                 return done(error)
             }
@@ -111,17 +115,21 @@ passport.use(
 
 
 // Serialize and Deserialize user (for session management)
-passport.serializeUser((user, done => {
+passport.serializeUser((user, done) => {
     done(null, user.id);
-}));
+});
 
 
 passport.deserializeUser(async (id, done) => {
     try {
         const user = await User.findById(id);
         done(null, user);
-        
+
     } catch (error) {
         done(error);
     }
 });
+
+
+
+export default passport;
