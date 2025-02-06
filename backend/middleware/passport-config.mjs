@@ -4,6 +4,7 @@ import { ExtractJwt } from "passport-jwt";
 import passport from "passport";
 import bcrypt from "bcryptjs";
 import User from "../models/user.mjs";
+import user from "../models/user.mjs";
 
 
 // Register strategy
@@ -74,15 +75,8 @@ passport.use(
                     return done(null, false, { message: "Invalid email or password" });
                 }
 
-                // Generate JWT Token
-                const token = jwt.sign(
-                    { id: user._id, email: user.email },
-                    process.env.SECRETKEY,
-                    { expiresIn: "1d" }
-                );
-                
                 // Authentication successful
-                return done(null, user, { message:"Successfully logged in", token});
+                return done(null, user);
 
             } catch (error) {
                 return done(error);
@@ -96,22 +90,33 @@ passport.use(
 passport.use(
     new JWTstrategy(
         {
-            secretOrKey: process.env.SECRETKEY,
+            secretOrKey: process.env.JWT_SECRET,
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
         },
-        async(jwtPayload,done) => {
+        async(token,done) => {
             try {
-
-                // Find the user based on the JWT payload (id)
-                const user = await User.findById(jwtPayload.id);
-                if(!user){
-                    return done(null, false, {message: "User not found" });
-                }
-                return done(null, user);
+                return done(null, token.user);
                 
             } catch (error) {
-                return done(error, false)
+                return done(error)
             }
         }
     )
 );
+
+
+// Serialize and Deserialize user (for session management)
+passport.serializeUser((user, done => {
+    done(null, user.id);
+}));
+
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+        
+    } catch (error) {
+        done(error);
+    }
+});
