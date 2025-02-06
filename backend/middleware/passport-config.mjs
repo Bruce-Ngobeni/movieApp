@@ -5,6 +5,11 @@ import passport from "passport";
 import bcrypt from "bcryptjs";
 import User from "../models/user.mjs";
 import user from "../models/user.mjs";
+import dotenv from "dotenv";
+
+
+//Load environment variables
+dotenv.config();
 
 
 // Register strategy
