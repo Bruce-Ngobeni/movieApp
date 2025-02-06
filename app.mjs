@@ -32,25 +32,6 @@ const PORT = 3000;
 
 
 //==========================
-// DATABASE CONNECTION
-//==========================
-
-
-// Connect to database
-const connectDB = async () => {
-    try {
-        const client = await mongoose.connect(process.env.DB_URL);
-        console.log("Successfully connected to the database!")
-
-    } catch (error) {
-        console.log("Error connecting to database!")
-    }
-}
-connectDB();
-
-
-
-//==========================
 // CONFIG
 //==========================
 
@@ -59,13 +40,9 @@ connectDB();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
+
 //dotenv CONFIG
 dotenv.config();
-
-
-app.get("/", (req, res) => {
-    res.send("Hellow world!")
-})
 
 
 
@@ -83,6 +60,26 @@ app.use("/", authRoutes);
 
 // Error Handling Middleware config
 app.use(errorhandle);
+
+
+
+//==========================
+// DATABASE CONNECTION
+//==========================
+
+
+// Connect to database
+const connectDB = async () => {
+    try {
+        const client = await mongoose.connect(process.env.DB_URL);
+        console.log("Successfully connected to the database!")
+
+    } catch (error) {
+        console.log("Error connecting to database!")
+        console.log(error);
+    }
+}
+connectDB();
 
 
 
