@@ -1,6 +1,8 @@
-import { Router as router } from "express";
+import express from "express";
 import User from "../models/user.mjs"
 import bcrypt from 'bcryptjs';
+
+const router = express.Router();
 
 
 router.post("/register", async (req, res, next) => {
@@ -17,7 +19,7 @@ router.post("/register", async (req, res, next) => {
         }
 
         // Hash the password
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create the new user with hashed password
         const newUser = new User({email, password: hashedPassword});
