@@ -36,7 +36,7 @@ router.post("/login", (req, res, next) => {
             return res.status(401).json({message: info?.message || "Invalid credentials "});
         }
 
-        req.login(user, {session: false }, (err) => {
+        req.login(user, {session: true }, (err) => {
             if (err) return res.status(500).json({message: "Login error", error:err});
 
             const token = jwt.sign({id: user._id, email: user.email}, process.env.JWT_SECRET, {expiresIn: "1d"});

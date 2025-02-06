@@ -43,9 +43,10 @@ app.use(
         resave: false,
         saveUninitialized: true,
         store: MongoStore.create({mongoUrl: process.env.DB_URL}),
-        cookie: {secure: false}  // Set secure after implementing HTTPS -------------------------------
+        cookie: {secure: false, maxAge: 1000 * 60 * 60 * 24 }  // Set secure after implementing HTTPS ----------
     })
 )
+
 
 
 //initialize passport
