@@ -44,10 +44,10 @@ describe("POST /register _  Auth Register Route Integration Test", () => {
 
         const response = await request(app)
             .post("/register")
-            .send({ email: "test@emaple.com", password: "password123" });
+            .send({ email: "test@example.com", password: "password123" });
 
         expect(response.status).toEqual(201);
-        expect(response.body.email).toEqual("test@emaple.com");
+        expect(response.body.email).toEqual("test@example.com");
         expect(response.body).toHaveProperty('token');
         expect(response.body.message).toBe("User successfully created");
     })
