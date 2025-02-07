@@ -13,6 +13,9 @@ import bodyParser from "body-parser";
 import passport from "passport";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import helmet from "helmet";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
 
 
 //==========================
@@ -20,6 +23,27 @@ import MongoStore from "connect-mongo";
 //==========================
 const app = express();
 const PORT = 3000;
+
+
+app.use(helmet());
+
+app.use(cors ({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["content-Type", "Authorization"],
+    credentials: true
+}))
+
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: "Too many requests from this IP, please try again later.",
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+app.use(limiter);
 
 
 //==========================
