@@ -1,14 +1,16 @@
 //==========================
-// IMPORTS
+// IMPORTS & CONFIGURATIONS
 //==========================
 
 
-//==========================
-// NPM IMPORTS
-//==========================
-import express from "express";
+// Load environment variables
 import dotenv from 'dotenv';
-import mongoose, { Schema } from 'mongoose';
+dotenv.config();
+
+
+// NPM Modules
+import express from "express";
+import mongoose from 'mongoose';
 import bodyParser from "body-parser";
 import passport from "passport";
 import session from "express-session";
@@ -18,16 +20,32 @@ import cors from "cors";
 import rateLimit from "express-rate-limit";
 
 
+// Middleware Imports
+import errorhandle from "./backend/middleware/errorHandle.mjs";
+import "./backend/middleware/passport-config.mjs";
+
+
+// Route Imports
+import authRoutes from "./backend/routes/auth.mjs";
+
+
 //==========================
-// DEVELOPMENT
+// APP SETUP
 //==========================
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 
+//==========================
+// SECURITY MIDDLEWARE
+//==========================
+
+// Protect HTTP headers
 app.use(helmet());
 
-app.use(cors ({
+
+// CORS Configuration
+app.use(cors({
     origin: ["http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["content-Type", "Authorization"],
@@ -35,6 +53,7 @@ app.use(cors ({
 }))
 
 
+// Rate Limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
@@ -47,82 +66,50 @@ app.use(limiter);
 
 
 //==========================
-// Middleware IMPORTS
+// SESSIONS & AUTHENTICATION
 //==========================
 
-// errorhandling
-import errorhandle from "./backend/middleware/errorHandle.mjs";
 
-//passport strategies
-import "./backend/middleware/passport-config.mjs";
-
-//dotenv CONFIG
-dotenv.config();
-
-
-// Session middleware for web authentication
+// Session Middleware
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: true,
-        store: MongoStore.create({mongoUrl: process.env.DB_URL}),
-        cookie: {secure: false, maxAge: 1000 * 60 * 60 * 24 }  // Set secure after implementing HTTPS ----------
+        store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
+        cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 }  // Set secure after implementing HTTPS ----------
     })
 )
 
 
-
-//initialize passport
+// Passport Authentication
 app.use(passport.initialize());
 app.use(passport.session());
 
 
-// Models IMPORTS
-
-
-
 //==========================
-// ROUTES IMPORTS
-//==========================
-import authRoutes from "./backend/routes/auth.mjs";
-
-
-
-//==========================
-// CONFIG
+// MIDDLEWARES
 //==========================
 
 
-// Config body-parser and express to parse JSON & form data
+// Body Parsing
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 
-
-//==========================
-// ROUTES Configuration
-//==========================
-
-app.use("/", authRoutes);
-
-
-
-//==========================
-// Middlewares Configuration
-//==========================
-
-// Error Handling Middleware config
+// Error Handling Middleware
 app.use(errorhandle);
 
+
+//==========================
+// ROUTE HANDLING
+//==========================
+app.use("/", authRoutes);
 
 
 //==========================
 // DATABASE CONNECTION
 //==========================
-
-
-// Connect to database
 const connectDB = async () => {
     try {
         const client = await mongoose.connect(process.env.DB_URL);
@@ -137,8 +124,9 @@ connectDB();
 
 
 
+
 //==========================
-// LISTEN
+// SERVER START
 //==========================
 app.listen(PORT, () => {
     console.log("Server listening at port: ", PORT);
