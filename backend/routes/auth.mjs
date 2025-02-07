@@ -7,6 +7,13 @@ import bcrypt from "bcryptjs";
 const router = express.Router();
 
 
+router.get("/", (req, res) => {
+    console.log("Hello world");
+    res.send("Hello world");
+});
+
+
+
 // Register route
 router.post("/register", (req, res, next) => {
 
