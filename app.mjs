@@ -126,21 +126,21 @@ connectDB();
 
 
 // HTTPS options
-const options = {
-    key: fs.readFileSync("server.key"),
-    cert: fs.readFileSync("server.cert"),
-};
+// const options = {
+//     key: fs.readFileSync("server.key"),
+//     cert: fs.readFileSync("server.cert"),
+// };
 
 
 //==========================
 // SERVER START
 //==========================
-// app.listen(PORT, () => {
-//     console.log("Server listening at port: ", PORT);
-// })
-https.createServer(options, app).listen(PORT, () => {
-    console.log("Secure server running on https://localhost:3000")
+app.listen(PORT, () => {
+    console.log("Server listening at port: ", PORT);
 })
+// https.createServer(options, app).listen(PORT, () => {
+//     console.log("Secure server running on https://localhost:3000")
+// })
 
 
 export default app;
